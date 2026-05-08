@@ -14,7 +14,11 @@ public class LaserWeapon : MonoBehaviour
     void Start()
     {
         shoot = InputSystem.actions.FindAction("Shoot");
-        if(!(laserBeam = transform.GetComponentInChildren<LineRenderer>() as LineRenderer))
+        if(shoot == null)
+        { 
+            Debug.LogError("Shoot action not found in Input System.");
+        }
+        if (!(laserBeam = transform.GetComponentInChildren<LineRenderer>() as LineRenderer))
         {
             Debug.LogError("LaserWeapon script requires a LineRenderer component.");
         }
