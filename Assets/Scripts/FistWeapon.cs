@@ -1,5 +1,3 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 public class FistWeapon : MonoBehaviour
@@ -15,6 +13,7 @@ public class FistWeapon : MonoBehaviour
     [SerializeField] private float armExtension = 0.5f;
     [SerializeField] private GameObject fistSprite;
     private Vector2 originalFistPosition;
+    [SerializeField] private LineRenderer fistRope;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -39,6 +38,7 @@ public class FistWeapon : MonoBehaviour
         animationTime -= Time.deltaTime * animationSpeed;
         animationTime = Mathf.Clamp01(animationTime);
         fistSprite.transform.localPosition = Vector2.Lerp(originalFistPosition, originalFistPosition + (Vector2.up * armExtension), animationTime);
+        fistRope.SetPosition(1, new Vector3(0, armExtension* animationTime, 0));
 
     }
     private void FixedUpdate()
@@ -52,7 +52,8 @@ public class FistWeapon : MonoBehaviour
                 foreach (var hit in smashHits)
                 {
                     Debug.Log("Hit: " + hit.collider.name);
-                    hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * smashForce, ForceMode2D.Impulse);
+                    hit.rigidbody.AddForce((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized * smashForce, ForceMode2D.Impulse);
+                    hit.rigidbody.AddTorque((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized.x * smashForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
                 }
                 smashHits = null;
             }
