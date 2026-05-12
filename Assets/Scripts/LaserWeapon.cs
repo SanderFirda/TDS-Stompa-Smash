@@ -14,7 +14,7 @@ public class LaserWeapon : MonoBehaviour
     void Start()
     {
         shoot = InputSystem.actions.FindAction("Shoot");
-        if(shoot == null)
+        if (shoot == null)
         { 
             Debug.LogError("Shoot action not found in Input System.");
         }
@@ -42,6 +42,7 @@ public class LaserWeapon : MonoBehaviour
             {
                 laserBeam.SetPosition(1,Vector2.up * hit.distance);
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * hit.distance, Color.red);
+                Debug.Log("Hit: " + hit.collider.name);
 
             }
             else
@@ -52,6 +53,7 @@ public class LaserWeapon : MonoBehaviour
             }
         }
         else laserBeam.enabled = false;
-        
+
+
     }
 }
