@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -40,7 +42,7 @@ public class LaserWeapon : MonoBehaviour
             laserBeam.enabled = true;
             if(hit = Physics2D.Raycast(laserMuzzle.transform.position, (transform.rotation * Vector2.up), laserRange))
             {
-                laserBeam.SetPosition(1,Vector2.up * hit.distance);
+                laserBeam.SetPosition(1,(Vector2.up * hit.distance) + laserMuzzle.transform.localPosition.ConvertTo<Vector2>());
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * hit.distance, Color.red);
                 Debug.Log("Hit: " + hit.collider.name);
                 hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * laserForce, ForceMode2D.Impulse);
