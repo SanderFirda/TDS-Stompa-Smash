@@ -52,8 +52,11 @@ public class FistWeapon : MonoBehaviour
                 foreach (var hit in smashHits)
                 {
                     Debug.Log("Hit: " + hit.collider.name);
-                    hit.rigidbody.AddForce((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized * smashForce, ForceMode2D.Impulse);
-                    hit.rigidbody.AddTorque((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized.x * smashForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
+                    if(hit.rigidbody != null)
+                    {
+                        hit.rigidbody.AddForce((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized * smashForce, ForceMode2D.Impulse);
+                        hit.rigidbody.AddTorque((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized.x * smashForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
+                    }
                 }
                 smashHits = null;
             }

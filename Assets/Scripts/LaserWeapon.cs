@@ -10,7 +10,7 @@ public class LaserWeapon : MonoBehaviour
     [SerializeField] private LineRenderer laserBeam;
     [SerializeField] private float laserRange = 10f;
     [SerializeField] private GameObject laserMuzzle;
-    [SerializeField] private float laserForce = 10f;
+    [SerializeField] private float laserForce = -10f;
     private RaycastHit2D hit;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,9 +45,11 @@ public class LaserWeapon : MonoBehaviour
                 laserBeam.SetPosition(1,(Vector2.up * hit.distance) + laserMuzzle.transform.localPosition.ConvertTo<Vector2>());
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * hit.distance, Color.red);
                 Debug.Log("Hit: " + hit.collider.name);
-                hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * laserForce, ForceMode2D.Impulse);
-                hit.rigidbody.AddTorque((hit.transform.position - transform.position).normalized.x * laserForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
-
+                if (hit.rigidbody != null)
+                {
+                    hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * laserForce, ForceMode2D.Impulse);
+                    hit.rigidbody.AddTorque((hit.transform.position - transform.position).normalized.x * laserForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
+                }
             }
             else
             {
