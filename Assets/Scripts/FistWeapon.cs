@@ -3,9 +3,12 @@ using UnityEngine.InputSystem;
 public class FistWeapon : MonoBehaviour
 {
     InputAction smash;
+
     [SerializeField] private Vector2 smashColliderSize = new Vector2(1.8f, 1f);
     [SerializeField] private Vector2 smashColliderOffset = new Vector2(0,0.8f);
+
     [SerializeField] private float smashForce = 10f;
+    [SerializeField] private int smashDamage = 10;
     private RaycastHit2D[] smashHits;
     bool smashActive;
     private float animationTime;
@@ -52,10 +55,20 @@ public class FistWeapon : MonoBehaviour
                 foreach (var hit in smashHits)
                 {
                     Debug.Log("Hit: " + hit.collider.name);
-                    if(hit.rigidbody != null)
+                    var enemyMove = hit.collider.GetComponent<EnemyMove>();
+                    if (enemyMove != null)
+                    {
+                        enemyMove.Stun(0.5f);
+                    }
+                    if (hit.rigidbody != null)
                     {
                         hit.rigidbody.AddForce((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized * smashForce, ForceMode2D.Impulse);
                         hit.rigidbody.AddTorque((hit.transform.position - ((transform.rotation * smashColliderOffset) + transform.position)).normalized.x * smashForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
+                    }
+                    var health = hit.collider.GetComponent<Health>();
+                    if (health != null)
+                    {
+                        health.TakeDamage(smashDamage);
                     }
                 }
                 smashHits = null;

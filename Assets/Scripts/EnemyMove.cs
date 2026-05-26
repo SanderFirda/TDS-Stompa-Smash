@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-
 public class EnemyMove : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> waypoints;
-    private GameObject targetWaypoint;
+    [SerializeField] private List<Vector2> waypoints;
+
+    private Vector2 targetWaypoint;
+
     private GameObject playerObject;
+
     private bool playerInRange = false;
     private bool chacingPlayer = false;
     private bool leftPlayerRange = false;
@@ -16,11 +18,16 @@ public class EnemyMove : MonoBehaviour
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float wanderSpeed = 1f;
+    [SerializeField] private float wanderRange = 2f;
+    [SerializeField] private int wanderWaypoints = 5;
     [SerializeField] private float runAwaySpeed = 3f;
     [SerializeField] private float runAwayRange = 5f;
     [SerializeField] private float runAwayTime = 1f;
 
     private Vector2 destination;
+
+    private float stunTime = 0;
+    [SerializeField] private float maxStunTime = 1f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -35,10 +42,11 @@ public class EnemyMove : MonoBehaviour
             Debug.LogError("EnemyMove script requires a Rigidbody2D component.");
         }
 
-        waypoints = GameObject.FindGameObjectsWithTag("Waypoint").ToList();
-        if(waypoints.Count == 0)
+
+        for (int i = 0; i < wanderWaypoints; i++)
         {
-            Debug.LogError("EnemyMove script requires at least one waypoint in the scene.");
+            Vector2 randomPoint = (Vector2)transform.position + Random.insideUnitCircle * wanderRange;
+            waypoints.Add(randomPoint);
         }
         targetWaypoint = waypoints[0];
     }
@@ -46,6 +54,12 @@ public class EnemyMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (stunTime > 0)
+        {
+            stunTime -= Time.deltaTime;
+        }
+        stunTime = Mathf.Clamp(stunTime, 0, maxStunTime);
+
         if (chacingPlayer)
         {
             //Do stuff with animation?
@@ -55,9 +69,9 @@ public class EnemyMove : MonoBehaviour
             rangeTimer += Time.deltaTime;
             if (rangeTimer >= runAwayTime)
             {
+                FindNewWayPoint();
                 playerInRange = false;
                 chacingPlayer = false;
-
                 leftPlayerRange = false;
                 rangeTimer = 0f;
             }
@@ -66,9 +80,9 @@ public class EnemyMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (Vector2.Distance(transform.position, targetWaypoint.transform.position) < 0.1f)
+        if (Vector2.Distance(transform.position, targetWaypoint) < 0.1f)
         {
-            targetWaypoint = waypoints[Random.Range(0, waypoints.Count)];
+            FindNewWayPoint();
         }
 
         if (playerInRange)
@@ -91,13 +105,20 @@ public class EnemyMove : MonoBehaviour
             }
         }
         
-        MoveTowardsTarget(targetWaypoint.transform.position, wanderSpeed);
-        Debug.DrawLine(transform.position, targetWaypoint.transform.position, Color.yellow);
+        MoveTowardsTarget(targetWaypoint, wanderSpeed);
+        Debug.DrawLine(transform.position, targetWaypoint, Color.yellow);
         
     }
-
+    void FindNewWayPoint()
+    {
+        targetWaypoint = waypoints[Random.Range(0, waypoints.Count)];
+    }
     void MoveTowardsTarget(Vector2 target, float moveSpeed)
     {
+        if (stunTime > 0)
+        {
+            return;
+        }
         Vector2 direction = (target - (Vector2)transform.position).normalized;
         rb.linearVelocity = direction * moveSpeed;
 
@@ -132,7 +153,17 @@ public class EnemyMove : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        foreach(Vector2 waypoint in waypoints)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(waypoint, 0.1f);
+        }
         Gizmos.color = Color.yellow;
         Gizmos.DrawSphere(destination, 0.1f);
+    }
+
+    public void Stun(float time)
+    {
+        stunTime += time;
     }
 }

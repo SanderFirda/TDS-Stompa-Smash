@@ -10,8 +10,15 @@ public class LaserWeapon : MonoBehaviour
     [SerializeField] private LineRenderer laserBeam;
     [SerializeField] private float laserRange = 10f;
     [SerializeField] private GameObject laserMuzzle;
-    [SerializeField] private float laserForce = -10f;
+    [SerializeField] private float pullForce = 10f;
+    [SerializeField] private float stunDuration = 0.1f;
+    [SerializeField] private float maxPullSpeed = 5f;
+
     private RaycastHit2D hit;
+    private RaycastHit2D lastHit;
+    private EnemyMove enemyMove;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -42,20 +49,37 @@ public class LaserWeapon : MonoBehaviour
             laserBeam.enabled = true;
             if(hit = Physics2D.Raycast(laserMuzzle.transform.position, (transform.rotation * Vector2.up), laserRange))
             {
+                //if(hit != lastHit)
+                {
+                    enemyMove = hit.collider.GetComponent<EnemyMove>();
+                    lastHit = hit;
+                }
+                if (enemyMove != null)
+                {
+                    Debug.Log("Stunned: " + hit.collider.name);
+                    enemyMove.Stun(stunDuration);
+                }
+
+
                 laserBeam.SetPosition(1,(Vector2.up * hit.distance) + laserMuzzle.transform.localPosition.ConvertTo<Vector2>());
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * hit.distance, Color.red);
                 Debug.Log("Hit: " + hit.collider.name);
+
+
                 if (hit.rigidbody != null)
                 {
-                    hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * laserForce, ForceMode2D.Impulse);
-                    hit.rigidbody.AddTorque((hit.transform.position - transform.position).normalized.x * laserForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);
+                    if(hit.rigidbody.linearVelocity.magnitude < maxPullSpeed)
+                    {
+                        hit.rigidbody.AddForce((hit.transform.position - transform.position).normalized * -pullForce, ForceMode2D.Impulse);
+                        hit.rigidbody.AddTorque((hit.transform.position - transform.position).normalized.x * -pullForce * Random.Range(-1f, 1f), ForceMode2D.Impulse);                
+                    }
                 }
             }
             else
             {
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * laserRange, Color.red);
                 laserBeam.SetPosition(1, Vector2.up * laserRange);
-
+                enemyMove = null;
             }
         }
         else laserBeam.enabled = false;
