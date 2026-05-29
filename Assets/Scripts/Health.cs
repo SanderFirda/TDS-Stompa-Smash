@@ -4,7 +4,8 @@ public class Health : MonoBehaviour
 {
     [SerializeField] private int maxHealth = 100;
     private int currentHealth;
-    private enum HealthType { Player, Enemy }
+    public bool IsAlive => currentHealth > 0;
+    private enum HealthType { Player, Enemy, Neutral }
 
     [SerializeField] private HealthType healthType;
 
@@ -47,7 +48,7 @@ public class Health : MonoBehaviour
     private void Die()
     {
         // Handle death logic here
-        switch(healthType)
+        switch (healthType)
         {
             case HealthType.Player:
                 // Player-specific death logic
@@ -58,8 +59,11 @@ public class Health : MonoBehaviour
                 // Enemy-specific death logic
                 Debug.Log("Enemy has died.");
                 Destroy(gameObject);
-                break;  
+                break;
 
+            case HealthType.Neutral:
+                Debug.Log("Neutral object destroyed.");
+                break;
         }
     }
 }

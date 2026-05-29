@@ -11,7 +11,7 @@ public class EnemyMove : MonoBehaviour
     private GameObject playerObject;
 
     private bool playerInRange = false;
-    private bool chacingPlayer = false;
+    private bool runningFromPlayer = false;
     private bool leftPlayerRange = false;
     private float rangeTimer = 0f;
 
@@ -28,6 +28,9 @@ public class EnemyMove : MonoBehaviour
 
     private float stunTime = 0;
     [SerializeField] private float maxStunTime = 1f;
+    [SerializeField] private Vector2 waypointTimeOutRng = new Vector2(1f, 2f);
+    private float wpointTimeOut;
+    private float WPTimer = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,6 +52,8 @@ public class EnemyMove : MonoBehaviour
             waypoints.Add(randomPoint);
         }
         targetWaypoint = waypoints[0];
+        wpointTimeOut = Random.Range(waypointTimeOutRng.x, waypointTimeOutRng.y);
+
     }
 
     // Update is called once per frame
@@ -60,7 +65,7 @@ public class EnemyMove : MonoBehaviour
         }
         stunTime = Mathf.Clamp(stunTime, 0, maxStunTime);
 
-        if (chacingPlayer)
+        if (runningFromPlayer)
         {
             //Do stuff with animation?
         }
@@ -71,7 +76,7 @@ public class EnemyMove : MonoBehaviour
             {
                 FindNewWayPoint();
                 playerInRange = false;
-                chacingPlayer = false;
+                runningFromPlayer = false;
                 leftPlayerRange = false;
                 rangeTimer = 0f;
             }
@@ -90,21 +95,31 @@ public class EnemyMove : MonoBehaviour
             RaycastHit2D[] hits = Physics2D.LinecastAll(transform.position, playerObject.transform.position, LayerMask.GetMask("SolidWalls"));
             if (hits.Length == 0)
             {
-                Debug.DrawLine(transform.position, playerObject.transform.position, Color.green);
-                chacingPlayer = true;
+                runningFromPlayer = true;
+
                 Vector2 directionAwayFromPlayer = -(playerObject.transform.position - transform.position).normalized;
                 MoveTowardsTarget((Vector2)playerObject.transform.position + directionAwayFromPlayer * runAwayRange, runAwaySpeed);
+                
+                Debug.DrawLine(transform.position, playerObject.transform.position, Color.green);
+
                 return;
             }
             else
             {
+                runningFromPlayer = false;
+
                 Debug.Log("Hits: " + hits.Length);
                 Debug.Log(hits[0].collider.name);
-                chacingPlayer = false;
                 Debug.DrawLine(transform.position, playerObject.transform.position, Color.red);
             }
         }
-        
+        WPTimer += Time.deltaTime;
+        if (WPTimer >= wpointTimeOut)
+        {
+            FindNewWayPoint();
+            WPTimer = 0f;
+        }
+
         MoveTowardsTarget(targetWaypoint, wanderSpeed);
         Debug.DrawLine(transform.position, targetWaypoint, Color.yellow);
         

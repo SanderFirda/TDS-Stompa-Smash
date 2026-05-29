@@ -54,9 +54,11 @@ MonoBehaviour:
   wanderSpeed: 1
   wanderRange: 2
   wanderWaypoints: 5
-  runAwaySpeed: 1.5
+  runAwaySpeed: 2
   runAwayRange: 5
   runAwayTime: 1
+  maxStunTime: 1
+  waypointTimeOutRng: {x: 1, y: 2.5}
 --- !u!50 &1865105817211067929
 Rigidbody2D:
   serializedVersion: 5
@@ -73,7 +75,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 626606154233d084d89e61651c7ad43b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

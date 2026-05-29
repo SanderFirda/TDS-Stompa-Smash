@@ -50,7 +50,9 @@ MonoBehaviour:
   laserBeam: {fileID: 732762447077391856}
   laserRange: 20
   laserMuzzle: {fileID: 5485207596370148030}
-  laserForce: -50
+  pullForce: 10
+  stunDuration: 0.2
+  maxPullSpeed: 5
 --- !u!1 &3554136995704121114
 GameObject:
   m_ObjectHideFlags: 0
@@ -678,7 +680,7 @@ Rigidbody2D:
   m_LinearDamping: 0.8
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 6200000, guid: 626606154233d084d89e61651c7ad43b, type: 2}
+  m_Material: {fileID: 6200000, guid: 5a72c118ec243a34a990fde55d72f63b, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
