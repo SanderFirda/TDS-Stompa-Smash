@@ -136,6 +136,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHealth: 100
   healthType: 1
+  deathSplats:
+  - {fileID: 7914649695879619001, guid: 5bcfdf4127971b54f93bc75dcef07115, type: 3}
+  - {fileID: 2106865549625741026, guid: 74a60257803c9e542b489dc254fd1064, type: 3}
 --- !u!1 &5540848867166720675
 GameObject:
   m_ObjectHideFlags: 0

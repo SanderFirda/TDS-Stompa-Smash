@@ -7,9 +7,15 @@ public class PlayerMove : MonoBehaviour
     InputAction move; //This is the input action variable we will use to listen to our movement input.
                       //We will assign this variable to the "Move" action in the Input System in the Start() method.
 
+
     Vector2 moveV; //This is our movement vector.
                    //We don't strictly need to store a separate variable for this, but it makes the code easier to
                    //read and write if we don't have to call "move.ReadValue<Vector2>()" every time we want to use the movement input.
+
+    InputAction look; //Input action for look.
+
+    Vector2 lookV;
+    Vector2 dir;
 
     Rigidbody2D rb; //Our Rigidbody2D component, which we will use to apply movement forces to the player GameObject.
 
@@ -31,6 +37,7 @@ public class PlayerMove : MonoBehaviour
     void Start()
     {
         move = InputSystem.actions.FindAction("Move"); //Here we assign our movement input action to listen to the "Move" action
+        look = InputSystem.actions.FindAction("Look"); //Here we assign our look input action.
 
 
         if (!(rb = transform.GetComponent<Rigidbody2D>())) //Here we try to get the Rigidbody2D component from the player GameObject, and if we can't find it, we log an error.
@@ -57,12 +64,35 @@ public class PlayerMove : MonoBehaviour
               rb.AddForce(moveV * moveForce); //Here we use our "moveV" variable
         }
 
-        if (moveV != Vector2.zero) //If we have movement input, we want to rotate the player to face the direction of movement.
-                                   //If we don't have movement input, we want to keep the player facing the direction they were last moving in.
-        {
-            aimQ = Quaternion.Euler(0, 0, Mathf.LerpAngle(bodySprite.transform.rotation.eulerAngles.z, Mathf.Atan2(moveV.y, moveV.x) * Mathf.Rad2Deg - 90, Time.deltaTime * rotationSpeed));
-        }
+        //if (moveV != Vector2.zero) //If we have movement input, we want to rotate the player to face the direction of movement.
+        //                           //If we don't have movement input, we want to keep the player facing the direction they were last moving in.
+        //{
+        //    aimQ = Quaternion.Euler(0, 0, Mathf.LerpAngle(bodySprite.transform.rotation.eulerAngles.z, Mathf.Atan2(moveV.y, moveV.x) * Mathf.Rad2Deg - 90, Time.deltaTime * rotationSpeed));
+        //}
+        aimQ = Quaternion.Euler(0, 0, GetLookRot());
     }
+
+    private float GetLookRot()
+    {
+        lookV = look.ReadValue<Vector2>();
+
+        if(lookV != Vector2.zero)
+        {
+            dir = lookV;
+        }
+        var device = look.activeControl?.device;
+
+        if(device is Mouse)
+        {
+            dir = (Vector2)Camera.main.ScreenToWorldPoint((Vector3)lookV);
+            dir = (dir - (Vector2)transform.position).normalized;
+
+        }
+
+        float rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90;
+        return rot;
+    }
+
 
     //LateUpdate is called after all Update and FixedUpdate calls have been made.
     private void LateUpdate()

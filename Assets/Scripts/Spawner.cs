@@ -10,13 +10,13 @@ public class Spawner : MonoBehaviour
     
     [Header("Crate Settings")]
     [SerializeField] private List<GameObject> cratePrefabs;
-    [SerializeField] private float spawnInterval = 0.5f;
+    // [SerializeField] private float spawnInterval = 0.5f;
     [SerializeField] private int maxCrates = 10;
     [SerializeField] private List<GameObject> spawnedCrates;
 
     [Header("Barrel Settings")]
     [SerializeField] private List<GameObject> barrelPrefabs;
-    [SerializeField] private float barrelSpawnInterval = 1f;
+    // [SerializeField] private float barrelSpawnInterval = 1f;
     [SerializeField] private int maxBarrels = 5;
     [SerializeField] private List<GameObject> spawnedBarrels;
 
@@ -75,7 +75,8 @@ public class Spawner : MonoBehaviour
                 spawnedEnemies.RemoveAt(i);
                 if (spawnedEnemies.Count == 0)
                 {
-                    Debug.Log("All enemies defeated!");
+                    //Debug.Log("All enemies defeated!");
+                    GameManager.gameState = GameManager.GameState.Victory;
                 }
             }
             else if (!spawnArea.Contains(spawnedEnemies[i].transform.position))

@@ -56,14 +56,14 @@ public class LaserWeapon : MonoBehaviour
                 }
                 if (enemyMove != null)
                 {
-                    Debug.Log("Stunned: " + hit.collider.name);
+                    //Debug.Log("Stunned: " + hit.collider.name);
                     enemyMove.Stun(stunDuration);
                 }
 
 
                 laserBeam.SetPosition(1,(Vector2.up * hit.distance) + laserMuzzle.transform.localPosition.ConvertTo<Vector2>());
                 Debug.DrawRay(laserMuzzle.transform.position, (transform.rotation * Vector2.up) * hit.distance, Color.red);
-                Debug.Log("Hit: " + hit.collider.name);
+                //Debug.Log("Hit: " + hit.collider.name);
 
 
                 if (hit.rigidbody != null)

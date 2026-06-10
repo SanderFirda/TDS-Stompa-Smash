@@ -108,8 +108,8 @@ public class EnemyMove : MonoBehaviour
             {
                 runningFromPlayer = false;
 
-                Debug.Log("Hits: " + hits.Length);
-                Debug.Log(hits[0].collider.name);
+                //Debug.Log("Hits: " + hits.Length);
+                //Debug.Log(hits[0].collider.name);
                 Debug.DrawLine(transform.position, playerObject.transform.position, Color.red);
             }
         }

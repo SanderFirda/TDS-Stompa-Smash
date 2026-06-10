@@ -34,6 +34,7 @@ public class EnemySpawner : MonoBehaviour
         }
         if (spawnedEnemies.Count == 0)
         {
+            GameManager.gameState = GameManager.GameState.Victory;
             Debug.Log("All enemies defeated!");
         }
     }

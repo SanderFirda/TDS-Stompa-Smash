@@ -9,6 +9,7 @@ public class Health : MonoBehaviour
 
     [SerializeField] private HealthType healthType;
 
+    [SerializeField] private GameObject[] deathSplats;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -53,11 +54,14 @@ public class Health : MonoBehaviour
             case HealthType.Player:
                 // Player-specific death logic
                 Debug.Log("Player has died.");
+                GameManager.gameState = GameManager.GameState.GameOver;
                 break;
 
             case HealthType.Enemy:
                 // Enemy-specific death logic
                 Debug.Log("Enemy has died.");
+                GameManager.AddScore(10);
+                Instantiate(deathSplats[Random.Range(0, deathSplats.Length)], transform.position + Vector3.forward, transform.rotation);
                 Destroy(gameObject);
                 break;
 
